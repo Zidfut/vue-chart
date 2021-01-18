@@ -5,7 +5,7 @@
       <transition name="fade">
         <span v-if="activeValue" class="chart-percent">{{activeValue}}<span>%</span></span>
       </transition>
-      <chart ref="canvas" :showLegend="showLegend" @onHoverData="setData" @resetData="resetData" :chartdata="card.chartData" :options="chartOptions"/>
+      <chart ref="canvas" @onHoverData="setData" @resetData="resetData" :chartdata="card.chartData" :options="chartOptions"/>
     </div>
     <span class="period">Period PnL</span>
     <span class="percent">50%</span>
@@ -13,7 +13,7 @@
       <ul>
         <li v-for="(item, index) in legendArr" :key="index">
           {{item}}
-          <span @click="showLegend(item, index)" class="chart-legend" :class="{active:  activeIndex == index}" :title="card.chartData.labels[index]" :style="`background-color:${colorArr[index]}`"></span>
+          <span @click="toggleShowData(item, index)" class="chart-legend" :class="{active:  activeIndex == index}" :title="card.chartData.labels[index]" :style="`background-color:${colorArr[index]}`"></span>
         </li>
       </ul>
     </div>
@@ -49,7 +49,7 @@ export default {
       this.activeIndex = null;
       this.activeValue = 0;
     },
-    showLegend(val, index){
+    toggleShowData(val, index){
       this.$refs.canvas.toggleChartData(index);
       this.$refs.canvas.updateData();
     }
