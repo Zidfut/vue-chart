@@ -3,7 +3,7 @@ import { Doughnut } from 'vue-chartjs';
 
 export default {
   extends: Doughnut,
-  props: ['chartdata'],
+  props: ['chartdata', 'showLegend'],
   methods: {
     handleHover(event, elem){
       let item = elem[0];
@@ -14,18 +14,24 @@ export default {
           backgroundColor: item._view.backgroundColor,
           value: this.chartdata.datasets[0].data[item._index]
         })
-        this.$data._chart.update();
+        
       } else {
         this.$emit('resetData');
       }
+    },
+    updateData(){
+      this.$data._chart.update();
+    },
+    toggleChartData(index){
+      let meta = this.$data._chart.getDatasetMeta(0);
+      meta.data[index].hidden = !meta.data[index].hidden;
     }
   },
   mounted () {
     this.renderChart(this.chartdata, {
-      cutoutPercentage: 90,
+      cutoutPercentage: 88,
       legend: {
-        display: false,
-        onClick: this.legendClick
+        display: false
       },
       animation: {
         animateScale: true

@@ -1,11 +1,11 @@
 <template>
   <div class="card">
     <h2 class="card-title">{{card.cardTitle}}</h2>
-    <div class="chart">
+    <div class="chart" @mouseleave="resetData">
       <transition name="fade">
         <span v-if="activeValue" class="chart-percent">{{activeValue}}<span>%</span></span>
       </transition>
-      <chart ref="canvas" @onHoverData="setData" @resetData="resetData" :chartdata="card.chartData" :options="chartOptions"/>
+      <chart ref="canvas" :showLegend="showLegend" @onHoverData="setData" @resetData="resetData" :chartdata="card.chartData" :options="chartOptions"/>
     </div>
     <span class="period">Period PnL</span>
     <span class="percent">50%</span>
@@ -13,7 +13,7 @@
       <ul>
         <li v-for="(item, index) in legendArr" :key="index">
           {{item}}
-          <span class="chart-legend" :class="{active:  activeIndex == index}" :title="card.chartData.labels[index]" :style="`background-color:${card.chartData.datasets[0].backgroundColor[index]}`"></span>
+          <span @click="showLegend(item, index)" class="chart-legend" :class="{active:  activeIndex == index}" :title="card.chartData.labels[index]" :style="`background-color:${colorArr[index]}`"></span>
         </li>
       </ul>
     </div>
@@ -33,12 +33,9 @@ export default {
     return {
       activeIndex: null,
       activeValue: 0,
-      activeColor: null
-    }
-  },
-  computed: {
-    legendArr(){
-      return this.card.chartData.datasets[0].data;
+      activeColor: null,
+      legendArr: this.card.chartData.datasets[0].data,
+      colorArr: this.card.chartData.datasets[0].backgroundColor
     }
   },
   methods: {
@@ -46,11 +43,16 @@ export default {
       this.activeValue = val.value;
       this.activeIndex = val.index;
       this.card.chartData.datasets[0].hoverBorderColor = val.backgroundColor;
+      this.$refs.canvas.updateData();
     },
     resetData(){
       this.activeIndex = null;
       this.activeValue = 0;
     },
+    showLegend(val, index){
+      this.$refs.canvas.toggleChartData(index);
+      this.$refs.canvas.updateData();
+    }
   }
 }
 </script>
